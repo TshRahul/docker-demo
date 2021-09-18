@@ -8,28 +8,45 @@ pipeline{
    }
 
    stages{
+
+       stage("init"){
+          steps {
+             script {
+                gv = load "script.groovy"
+             }
+          }
+
+       }
+
        stage("build"){
           steps{
-             echo 'building the application...'
-             echo "bulding version ${NEW_VERSION}"
+             script{
+                 gv.buildApp()
+             }
+            
           }
        }
 
        stage("test"){
           when{
              expression {
-                params.executeTest == true
-                echo "skipping test phase as execute test is: ${params.executeTest}"
+                params.executeTest == true    
              }
           }
             steps{
-               echo 'testing the application...'
+               script{
+                  gv.testApp()
+               }
+              
             }
        }
 
        stage("deploy"){
              steps{
-                echo 'deploying the application...'
+                script{
+                    gv.deployApp()
+                }
+               
              }
        }
    }
